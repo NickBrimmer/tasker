@@ -63,12 +63,12 @@ export default function ListIndex({ loaderData }: Route.ComponentProps) {
           name="title"
           required
           placeholder="What needs doing?"
-          className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm"
+          className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
         />
         <button
           type="submit"
           disabled={isAdding}
-          className="rounded bg-gray-900 px-3 py-2 text-sm text-white disabled:opacity-50"
+          className="rounded bg-gray-900 px-3 py-2 text-sm text-white disabled:opacity-50 dark:bg-gray-200 dark:text-gray-900"
         >
           {isAdding ? "Adding…" : "Add"}
         </button>
@@ -80,14 +80,14 @@ export default function ListIndex({ loaderData }: Route.ComponentProps) {
         <FilterLink current={loaderData.status} value="done" label="Done" />
       </div>
 
-      <ul className="mt-4 divide-y divide-gray-100">
+      <ul className="mt-4 divide-y divide-gray-100 dark:divide-gray-800">
         {loaderData.todos.map((todo) => (
           <TodoRow key={todo.id} todo={todo} slug={todo.listSlug} />
         ))}
       </ul>
 
       {loaderData.todos.length === 0 && (
-        <p className="mt-6 text-sm text-gray-500">Nothing here.</p>
+        <p className="mt-6 text-sm text-gray-500 dark:text-gray-400">Nothing here.</p>
       )}
     </main>
   );
@@ -107,8 +107,8 @@ function FilterLink(props: FilterLinkProps) {
       to={props.value ? `?status=${props.value}` : "?"}
       className={
         isActive
-          ? "font-semibold text-gray-900"
-          : "text-gray-500 hover:text-gray-900"
+          ? "font-semibold text-gray-900 dark:text-gray-100"
+          : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
       }
     >
       {props.label}
@@ -146,7 +146,7 @@ function TodoRow(props: TodoRowProps) {
               ? `Mark ${props.todo.title} as open`
               : `Mark ${props.todo.title} as done`
           }
-          className="flex h-5 w-5 items-center justify-center rounded border border-gray-400 text-xs"
+          className="flex h-5 w-5 items-center justify-center rounded border border-gray-400 text-xs dark:border-gray-600"
         >
           {isDone ? "✓" : ""}
         </button>
@@ -159,7 +159,7 @@ function TodoRow(props: TodoRowProps) {
         })}
         className={
           isDone
-            ? "flex-1 text-sm text-gray-400 line-through"
+            ? "flex-1 text-sm text-gray-400 line-through dark:text-gray-500"
             : "flex-1 text-sm"
         }
       >
@@ -171,7 +171,7 @@ function TodoRow(props: TodoRowProps) {
         <input type="hidden" name="intent" value="delete" />
         <button
           type="submit"
-          className="text-xs text-gray-400 hover:text-red-600"
+          className="text-xs text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400"
         >
           Delete
         </button>

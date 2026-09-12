@@ -63,7 +63,7 @@ export default function EditTodo({
           slug: params.slug,
           todoId: loaderData.todo.id,
         })}
-        className="text-sm text-gray-500 hover:text-gray-900"
+        className="text-sm text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
       >
         ← Cancel
       </Link>
@@ -78,10 +78,10 @@ export default function EditTodo({
             name="title"
             defaultValue={loaderData.todo.title}
             aria-describedby={errors?.title ? "title-error" : undefined}
-            className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm"
+            className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
           />
           {errors?.title && (
-            <p id="title-error" className="mt-1 text-sm text-red-600">
+            <p id="title-error" className="mt-1 text-sm text-red-600 dark:text-red-400">
               {errors.title[0]}
             </p>
           )}
@@ -97,10 +97,10 @@ export default function EditTodo({
             rows={5}
             defaultValue={loaderData.todo.notes}
             aria-describedby={errors?.notes ? "notes-error" : undefined}
-            className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm"
+            className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
           />
           {errors?.notes && (
-            <p id="notes-error" className="mt-1 text-sm text-red-600">
+            <p id="notes-error" className="mt-1 text-sm text-red-600 dark:text-red-400">
               {errors.notes[0]}
             </p>
           )}
@@ -109,7 +109,7 @@ export default function EditTodo({
         <button
           type="submit"
           disabled={isSaving}
-          className="self-start rounded bg-gray-900 px-3 py-2 text-sm text-white disabled:opacity-50"
+          className="self-start rounded bg-gray-900 px-3 py-2 text-sm text-white disabled:opacity-50 dark:bg-gray-200 dark:text-gray-900"
         >
           {isSaving ? "Saving…" : "Save"}
         </button>

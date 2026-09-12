@@ -19,21 +19,21 @@ export default function TodoDetail({
     <main className="mt-6">
       <Link
         to={href("/list/:slug", { slug: params.slug })}
-        className="text-sm text-gray-500 hover:text-gray-900"
+        className="text-sm text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
       >
         ← Back
       </Link>
 
       <h1 className="mt-4 text-lg font-semibold">{loaderData.todo.title}</h1>
 
-      <p className="mt-1 text-sm text-gray-500">
+      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
         {loaderData.todo.status === "done" ? "Done" : "Open"} · added{" "}
         {loaderData.todo.createdAt.toLocaleDateString()}
       </p>
 
       <p className="mt-4 text-sm whitespace-pre-wrap">
         {loaderData.todo.notes || (
-          <span className="text-gray-400">No notes.</span>
+          <span className="text-gray-400 dark:text-gray-500">No notes.</span>
         )}
       </p>
 

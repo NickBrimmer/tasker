@@ -16,7 +16,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 export default function ListLayout({ loaderData }: Route.ComponentProps) {
   return (
     <div className="mx-auto max-w-2xl p-8">
-      <header className="border-b border-gray-200 pb-4">
+      <header className="border-b border-gray-200 pb-4 dark:border-gray-700">
         <nav className="flex gap-3">
           {loaderData.lists.map((list) => (
             <NavLink
@@ -25,15 +25,15 @@ export default function ListLayout({ loaderData }: Route.ComponentProps) {
               end
               className={({ isActive }) =>
                 isActive
-                  ? "font-semibold text-gray-900"
-                  : "text-gray-500 hover:text-gray-900"
+                  ? "font-semibold text-gray-900 dark:text-gray-100"
+                  : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
               }
             >
               {list.name}
             </NavLink>
           ))}
         </nav>
-        <p className="mt-2 text-sm text-gray-500">
+        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
           {loaderData.counts.open} open · {loaderData.counts.done} done
         </p>
       </header>
@@ -51,7 +51,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
       <h1 className="text-xl font-semibold">
         {isNotFound ? "Not found" : "Something broke"}
       </h1>
-      <p className="mt-2 text-sm text-gray-600">
+      <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
         {isNotFound
           ? "That list or todo does not exist."
           : "An unexpected error occurred."}
