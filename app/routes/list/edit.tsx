@@ -1,5 +1,6 @@
-import { Form, href, Link, redirect, useNavigation } from "react-router";
+import { Form, href, redirect, useNavigation } from "react-router";
 import { z } from "zod";
+import { Button, Input, Main, Stack, Textarea, TextLink } from "~/components";
 import { getTodo, updateTodo } from "~/todos.server";
 import type { Route } from "./+types/edit";
 
@@ -8,8 +9,8 @@ const editSchema = z.object({
     .string()
     .trim()
     .min(1, "Title is required")
-    .max(120, "Keep it under 120 characters"),
-  notes: z.string().max(2000, "Notes are too long"),
+    .max(120, "Keep it under 120 characters bud."),
+  notes: z.string().max(2000, "notes are too long"),
 });
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -57,63 +58,38 @@ export default function EditTodo({
   const errors = actionData?.fieldErrors;
 
   return (
-    <main className="mt-6">
-      <Link
-        to={href("/list/:slug/todo/:todoId", {
-          slug: params.slug,
-          todoId: loaderData.todo.id,
-        })}
-        className="text-sm text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
-      >
-        ← Cancel
-      </Link>
-
-      <Form method="post" className="mt-4 flex flex-col gap-4">
-        <div>
-          <label htmlFor="title" className="block text-sm font-medium">
-            Title
-          </label>
-          <input
-            id="title"
-            name="title"
-            defaultValue={loaderData.todo.title}
-            aria-describedby={errors?.title ? "title-error" : undefined}
-            className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-          />
-          {errors?.title && (
-            <p id="title-error" className="mt-1 text-sm text-red-600 dark:text-red-400">
-              {errors.title[0]}
-            </p>
-          )}
-        </div>
-
-        <div>
-          <label htmlFor="notes" className="block text-sm font-medium">
-            Notes
-          </label>
-          <textarea
-            id="notes"
-            name="notes"
-            rows={5}
-            defaultValue={loaderData.todo.notes}
-            aria-describedby={errors?.notes ? "notes-error" : undefined}
-            className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-          />
-          {errors?.notes && (
-            <p id="notes-error" className="mt-1 text-sm text-red-600 dark:text-red-400">
-              {errors.notes[0]}
-            </p>
-          )}
-        </div>
-
-        <button
-          type="submit"
-          disabled={isSaving}
-          className="self-start rounded bg-gray-900 px-3 py-2 text-sm text-white disabled:opacity-50 dark:bg-gray-200 dark:text-gray-900"
+    <Main>
+      <Stack gap={4}>
+        <TextLink
+          to={href("/list/:slug/todo/:todoId", {
+            slug: params.slug,
+            todoId: loaderData.todo.id,
+          })}
+          selfStart
         >
-          {isSaving ? "Saving…" : "Save"}
-        </button>
-      </Form>
-    </main>
+          Cancel
+        </TextLink>
+
+        <Form method="post">
+          <Stack gap={4}>
+            <Input
+              name="title"
+              label="Title"
+              defaultValue={loaderData.todo.title}
+              error={errors?.title?.[0]}
+            />
+            <Textarea
+              name="notes"
+              label="Notes"
+              defaultValue={loaderData.todo.notes}
+              error={errors?.notes?.[0]}
+            />
+            <Button pending={isSaving} pendingLabel="Saving..." selfStart>
+              Save
+            </Button>
+          </Stack>
+        </Form>
+      </Stack>
+    </Main>
   );
 }

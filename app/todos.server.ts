@@ -103,7 +103,6 @@ export type UpdateTodoParams = {
   title: string;
   notes: string;
 };
-
 export function updateTodo(params: UpdateTodoParams): void {
   const todo = getTodo(params.id);
   if (!todo) return;

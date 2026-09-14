@@ -5,15 +5,13 @@ const pkg = await Bun.file("package.json")
   .json()
   .catch(() => null);
 if (pkg?.name !== "tasker") {
-  console.error(
-    "refusing to run: no tasker package.json in the current directory",
-  );
+  console.error("refusing to run: no tasker package.json in the current dir");
   process.exit(1);
 }
 
-const ROUTES_TS = `import { type RouteConfig, index } from "@react-router/dev/routes";
+const ROUTES_TS = `import { type RouteConfig, index } from @react-router/dev/routes
 
-export default [index("routes/home.tsx")] satisfies RouteConfig;
+export default [index("routes/home.tsx")] satisfies RouterConfig;
 `;
 
 const HOME_TSX = `import type { Route } from "./+types/home";
@@ -42,5 +40,5 @@ await Bun.write("app/routes.ts", ROUTES_TS);
 await Bun.write("app/routes/home.tsx", HOME_TSX);
 
 console.log(
-  "reset — app/routes/ cleared, routes.ts and home.tsx restored to the clean slate",
+  "reset - app/routes/ cleared, routes.ts and home.tsx restored to the clean slate.",
 );
