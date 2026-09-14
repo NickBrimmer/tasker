@@ -16,16 +16,16 @@ export type List = {
 
 const lists: List[] = [
   { slug: "inbox", name: "Inbox" },
-  { slug: "somday", name: "Someday" },
+  { slug: "someday", name: "Someday" },
 ];
 
 let todos: Todo[] = [
   makeTodo(
     "inbox",
     "Read the React Router routing docs",
-    "Framework mode, not declaritive.",
+    "Framework mode, not declarative.",
   ),
-  makeTodo("inbox", "rebuild Tasker from blank routes.ts", ""),
+  makeTodo("inbox", "Rebuild Tasker from a blank routes.ts", ""),
   makeTodo(
     "someday",
     "Try the v8 future flags one at a time",
@@ -105,7 +105,7 @@ export type UpdateTodoParams = {
 };
 export function updateTodo(params: UpdateTodoParams): void {
   const todo = getTodo(params.id);
-  if (!id) return;
+  if (!todo) return;
 
   todo.title = params.title;
   todo.notes = params.notes;
