@@ -19,17 +19,14 @@ const lists: List[] = [
   { slug: "someday", name: "Someday" },
 ];
 
+// this is your Todos - this is your DB!
 let todos: Todo[] = [
-  makeTodo(
-    "inbox",
-    "Read the React Router routing docs",
-    "Framework mode, not declarative.",
-  ),
-  makeTodo("inbox", "Rebuild Tasker from a blank routes.ts", ""),
+  makeTodo("inbox", "React the React Docs", "Framework mode, not declaritive"),
+  makeTodo("inbox", "rebuild tasker from a blank routes.ts", ""),
   makeTodo(
     "someday",
-    "Try the v8 future flags one at a time",
-    "bun dev prints all five.",
+    "try the v8 future flags one at a time",
+    "bun dev prints all five",
   ),
 ];
 
@@ -44,31 +41,31 @@ function makeTodo(listSlug: string, title: string, notes: string): Todo {
   };
 }
 
-export function listLists(): List[] {
+export function getAllLists(): List[] {
   return lists;
 }
 
-export function getList(slug: string): List | undefined {
+export function findList(slug: string): List | undefined {
   return lists.find((list) => list.slug === slug);
 }
 
-export type ListTodosParams = {
+export type GetTodosParams = {
   listSlug: string;
   status?: TodoStatus;
 };
 
-export function listTodos(params: ListTodosParams): Todo[] {
+export function getTodos(params: GetTodosParams): Todo[] {
   return todos
     .filter((todo) => todo.listSlug === params.listSlug)
     .filter((todo) => (params.status ? todo.status === params.status : true))
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
 
-export function getTodo(id: string): Todo | undefined {
+export function findTodo(id: string): Todo | undefined {
   return todos.find((todo) => todo.id === id);
 }
 
-export function countByStatus(listSlug: string): {
+export function countTodosByStatus(listSlug: string): {
   open: number;
   done: number;
 } {
@@ -88,7 +85,7 @@ export function addTodo(listSlug: string, title: string): Todo {
 }
 
 export function toggleTodo(id: string): void {
-  const todo = getTodo(id);
+  const todo = findTodo(id);
   if (!todo) return;
 
   todo.status = todo.status === "open" ? "done" : "open";
@@ -103,8 +100,9 @@ export type UpdateTodoParams = {
   title: string;
   notes: string;
 };
+
 export function updateTodo(params: UpdateTodoParams): void {
-  const todo = getTodo(params.id);
+  const todo = findTodo(params.id);
   if (!todo) return;
 
   todo.title = params.title;

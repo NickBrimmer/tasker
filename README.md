@@ -64,7 +64,7 @@ Each level is a full app you could stop at. **Build from a blank `routes.ts` eac
 | **L5** | `?status=open` filter that survives reload and is linkable. | search params in the loader · `useSearchParams` | `loader` in `app/routes/list/index.tsx` |
 | **L6** | Edit page that saves and redirects back. Zod-validate the title; show a field error. | `redirect()` from an action · returning errors from an action | `app/routes/list/edit.tsx` |
 | **L7** | Break it on purpose. Add an `ErrorBoundary` and a pending state. | `ErrorBoundary` · `useNavigation` pending UI | `ErrorBoundary` in `app/routes/list/layout.tsx` |
-| **L8** | Split lists: `/list/:slug` layout, list picker at `/`. | nested `route()` · index redirect · param-scoped loaders | `app/routes.ts` + `app/routes/index.tsx` |
+| **L8** | Split lists: `/list/:listSlug` layout, list picker at `/`. | nested `route()` · index redirect · param-scoped loaders | `app/routes.ts` + `app/routes/index.tsx` |
 
 Read the answer key without disturbing your working tree:
 
@@ -118,6 +118,45 @@ Delete-and-rewrite in one repo rather than re-scaffolding. What makes that work 
 - **Write the level's acceptance check first**, one line in a comment: "I can add a todo and it survives a refresh." Then build to it.
 - **Log one line per day** in the commit body — level, minutes, what slowed you down. That last field tells you which level to repeat.
 - **Stop at 30 minutes even if unfinished.** Where you stopped is the useful data.
+
+---
+
+## Reading master side by side
+
+A second checkout of `master` in its own folder, so the finished code sits open next to the file you're retyping. One repo, one history, two working trees.
+
+**Set it up:**
+
+```bash
+git worktree add ../tasker-master master   # master checked out at ../tasker-master
+code --add ../tasker-master                # adds it as a second root folder in the current VS Code window
+```
+
+Then **File → Save Workspace As…**, saved *outside* both folders (`~/Developer/tasker.code-workspace`) — dropped inside either one it shows up as an untracked file.
+
+**Start the branch with the work stripped back out.** Branching off `master` hands you the files already written, so start from the commit *before* whatever you want to redo — `6f2bb20` (`t-2-dependencies-and-base-colors`) is the last one before the components existed:
+
+```bash
+git switch --detach 6f2bb20   # step off the branch; git won't delete the one you're standing on
+git branch -D t-3             # force-delete, safe while t-3 has no commits of its own
+git switch -c t-3 6f2bb20     # t-3 restarts before the component work — app/components/ is gone
+```
+
+**Put it back:**
+
+```bash
+git worktree remove ../tasker-master   # deletes the folder; refuses if you left edits in it (--force overrides)
+git worktree list                      # should show only the main checkout
+git switch -c t-4 origin/master        # a fresh branch at master, to abandon a rewrite and start clean
+```
+
+**When it gets weird:**
+
+```bash
+git worktree prune    # you deleted the folder by hand and git still lists it
+git worktree repair   # you moved or renamed a folder and the two ends lost track of each other
+git fetch origin      # master looks stale — local master only moves when you pull it
+```
 
 ---
 
@@ -196,6 +235,10 @@ A second process polling a `tasks` table, processing uploads in the background i
 
 ## Status
 
-All eight levels are implemented and committed as the reference build. Verified: `bun run check` clean, `bun test` 5/5, and every flow exercised end-to-end against the dev server — redirect from `/`, 404s on bad list / bad todo / cross-list access, add, toggle, delete, both filters, both Zod error branches, successful save + redirect, and nested layout counts revalidating after every mutation.
+All eight levels are implemented and committed as the reference build. Verified: `bun run check` clean and `bun test` 5/5.
 
-Not yet verified in a browser: the optimistic toggle, pending button states, and `NavLink` active styling are server-correct but visually unconfirmed.
+Exercised end-to-end against the dev server — redirect from `/`, 404s on bad list / bad todo / cross-list access, add, toggle, both filters, both Zod error branches, successful save + redirect, and nested layout counts revalidating after every mutation.
+
+**Delete is the exception.** The earlier claim that it was exercised end-to-end was wrong: the fetcher form posted a second `id` field instead of `intent`, so the action matched no branch and delete silently did nothing. `deleteTodo` itself was always correct and always covered by `bun test` — the break was in the form wiring, which nothing tests. Fixed, but not yet re-run against the dev server.
+
+Not yet verified in a browser: delete, the optimistic toggle, pending button states, and `NavLink` active styling are server-correct but visually unconfirmed.

@@ -1,50 +1,53 @@
 import { href, isRouteErrorResponse, Outlet } from "react-router";
 import {
-  Header,
+  Column,
   Heading,
-  Nav,
   Page,
-  Stack,
+  PageHeader,
   TabLink,
+  Tabs,
   Text,
   TextLink,
 } from "~/components";
-import { countByStatus, getList, listLists } from "~/todos.server";
+import { countTodosByStatus, findList, getAllLists } from "~/todos.server";
 import type { Route } from "./+types/layout";
 
 export async function loader({ params }: Route.LoaderArgs) {
-  const list = getList(params.slug);
+  const list = findList(params.listSlug);
+  // Thrown, not returned: it unwinds past this loader to the nearest ErrorBoundary.
   if (!list) throw new Response("List not found", { status: 404 });
 
   return {
     list,
-    lists: listLists(),
-    counts: countByStatus(list.slug),
+    lists: getAllLists(),
+    counts: countTodosByStatus(list.slug),
   };
 }
 
+// Typegen's props for this route: typed loaderData, actionData, params, matches.
 export default function ListLayout({ loaderData }: Route.ComponentProps) {
   return (
     <Page>
-      <Header>
-        <Stack gap={2}>
-          <Nav>
+      <PageHeader>
+        <Column gap={2}>
+          <Tabs>
             {loaderData.lists.map((list) => (
               <TabLink
                 key={list.slug}
-                to={href("/list/:slug", { slug: list.slug })}
+                to={href("/list/:listSlug", { listSlug: list.slug })}
                 end
               >
                 {list.name}
               </TabLink>
             ))}
-          </Nav>
+          </Tabs>
           <Text muted>
-            {loaderData.counts.open} open · {loaderData.counts.done} done
+            {loaderData.counts.open} open - {loaderData.counts.done} done
           </Text>
-        </Stack>
-      </Header>
+        </Column>
+      </PageHeader>
 
+      {/* Reads the route match one level below this layout and renders it: index, todo, or edit. */}
       <Outlet />
     </Page>
   );
@@ -55,8 +58,8 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 
   return (
     <Page>
-      <Stack gap={4}>
-        <Stack gap={2}>
+      <Column gap={4}>
+        <Column gap={2}>
           <Heading size="xl">
             {isNotFound ? "Not found" : "Something broke"}
           </Heading>
@@ -65,11 +68,11 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
               ? "That list or todo does not exist."
               : "An unexpected error occurred."}
           </Text>
-        </Stack>
+        </Column>
         <TextLink to="/" tone="normal" underline selfStart>
           Back to the first list
         </TextLink>
-      </Stack>
+      </Column>
     </Page>
   );
 }

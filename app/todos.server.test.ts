@@ -1,10 +1,10 @@
 import { expect, test } from "bun:test";
 import {
   addTodo,
-  countByStatus,
+  countTodosByStatus,
   deleteTodo,
-  getTodo,
-  listTodos,
+  findTodo,
+  getTodos,
   toggleTodo,
   updateTodo,
 } from "./todos.server";
@@ -14,21 +14,21 @@ test("adds a todo to the right list and leaves it open", () => {
 
   expect(todo.listSlug).toBe("inbox");
   expect(todo.status).toBe("open");
-  expect(getTodo(todo.id)?.title).toBe("Write a test");
+  expect(findTodo(todo.id)?.title).toBe("Write a test");
 
   deleteTodo(todo.id);
 });
 
 test("toggle flips status both ways and moves the counts", () => {
-  const before = countByStatus("inbox");
+  const before = countTodosByStatus("inbox");
   const todo = addTodo("inbox", "Toggle me");
 
   toggleTodo(todo.id);
-  expect(getTodo(todo.id)?.status).toBe("done");
-  expect(countByStatus("inbox").done).toBe(before.done + 1);
+  expect(findTodo(todo.id)?.status).toBe("done");
+  expect(countTodosByStatus("inbox").done).toBe(before.done + 1);
 
   toggleTodo(todo.id);
-  expect(getTodo(todo.id)?.status).toBe("open");
+  expect(findTodo(todo.id)?.status).toBe("open");
 
   deleteTodo(todo.id);
 });
@@ -38,7 +38,7 @@ test("status filter returns only matching todos", () => {
   const done = addTodo("inbox", "Already done");
   toggleTodo(done.id);
 
-  const doneIds = listTodos({ listSlug: "inbox", status: "done" }).map(
+  const doneIds = getTodos({ listSlug: "inbox", status: "done" }).map(
     (t) => t.id,
   );
   expect(doneIds).toContain(done.id);
@@ -51,10 +51,10 @@ test("status filter returns only matching todos", () => {
 test("todos are scoped to their list", () => {
   const todo = addTodo("someday", "Not in the inbox");
 
-  expect(listTodos({ listSlug: "inbox" }).map((t) => t.id)).not.toContain(
+  expect(getTodos({ listSlug: "inbox" }).map((t) => t.id)).not.toContain(
     todo.id,
   );
-  expect(listTodos({ listSlug: "someday" }).map((t) => t.id)).toContain(
+  expect(getTodos({ listSlug: "someday" }).map((t) => t.id)).toContain(
     todo.id,
   );
 
@@ -65,8 +65,8 @@ test("update rewrites title and notes", () => {
   const todo = addTodo("inbox", "Before");
   updateTodo({ id: todo.id, title: "After", notes: "With notes" });
 
-  expect(getTodo(todo.id)?.title).toBe("After");
-  expect(getTodo(todo.id)?.notes).toBe("With notes");
+  expect(findTodo(todo.id)?.title).toBe("After");
+  expect(findTodo(todo.id)?.notes).toBe("With notes");
 
   deleteTodo(todo.id);
 });
