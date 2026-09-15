@@ -16,7 +16,7 @@ export function List({ children, className }: ListProps) {
   );
 }
 
-export function Item({ children, className }: ListProps) {
+export function ListRow({ children, className }: ListProps) {
   return (
     <li className={cx("flex items-center gap-3 py-2", className)}>
       {children}

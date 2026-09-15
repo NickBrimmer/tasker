@@ -1,7 +1,14 @@
 import { Form, href, redirect, useNavigation } from "react-router";
 import { z } from "zod";
-import { Button, Input, Main, Stack, Textarea, TextLink } from "~/components";
-import { getTodo, updateTodo } from "~/todos.server";
+import {
+  Button,
+  Column,
+  Input,
+  PageBody,
+  Textarea,
+  TextLink,
+} from "~/components";
+import { findTodo, updateTodo } from "~/todos.server";
 import type { Route } from "./+types/edit";
 
 const editSchema = z.object({
@@ -9,21 +16,22 @@ const editSchema = z.object({
     .string()
     .trim()
     .min(1, "Title is required")
-    .max(120, "Keep it under 120 characters bud."),
-  notes: z.string().max(2000, "notes are too long"),
+    .max(120, "keep it under 120 characters bud."),
+  notes: z.string().max(2000, "notes are too long."),
 });
 
 export async function loader({ params }: Route.LoaderArgs) {
-  const todo = getTodo(params.todoId);
-  if (!todo || todo.listSlug !== params.slug)
+  const todo = findTodo(params.todoId);
+  // Thrown, not returned: it unwinds past this loader to the nearest ErrorBoundary.
+  if (!todo || todo.listSlug !== params.listSlug)
     throw new Response("Todo not found", { status: 404 });
 
   return { todo };
 }
 
 export async function action({ params, request }: Route.ActionArgs) {
-  const todo = getTodo(params.todoId);
-  if (!todo || todo.listSlug !== params.slug)
+  const todo = findTodo(params.todoId);
+  if (!todo || todo.listSlug !== params.listSlug)
     throw new Response("Todo not found", { status: 404 });
 
   const formData = await request.formData();
@@ -44,10 +52,14 @@ export async function action({ params, request }: Route.ActionArgs) {
   });
 
   return redirect(
-    href("/list/:slug/todo/:todoId", { slug: params.slug, todoId: todo.id }),
+    href("/list/:listSlug/todo/:todoId", {
+      listSlug: params.listSlug,
+      todoId: todo.id,
+    }),
   );
 }
 
+// Typegen's props for this route: typed loaderData, actionData, params, matches.
 export default function EditTodo({
   actionData,
   loaderData,
@@ -58,11 +70,11 @@ export default function EditTodo({
   const errors = actionData?.fieldErrors;
 
   return (
-    <Main>
-      <Stack gap={4}>
+    <PageBody>
+      <Column gap={4}>
         <TextLink
-          to={href("/list/:slug/todo/:todoId", {
-            slug: params.slug,
+          to={href("/list/:listSlug/todo/:todoId", {
+            listSlug: params.listSlug,
             todoId: loaderData.todo.id,
           })}
           selfStart
@@ -71,7 +83,7 @@ export default function EditTodo({
         </TextLink>
 
         <Form method="post">
-          <Stack gap={4}>
+          <Column gap={4}>
             <Input
               name="title"
               label="Title"
@@ -87,9 +99,9 @@ export default function EditTodo({
             <Button pending={isSaving} pendingLabel="Saving..." selfStart>
               Save
             </Button>
-          </Stack>
+          </Column>
         </Form>
-      </Stack>
-    </Main>
+      </Column>
+    </PageBody>
   );
 }

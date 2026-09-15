@@ -5,7 +5,9 @@ const pkg = await Bun.file("package.json")
   .json()
   .catch(() => null);
 if (pkg?.name !== "tasker") {
-  console.error("refusing to run: no tasker package.json in the current dir");
+  console.error(
+    "refusing to run: no tasker package.json in the current directory",
+  );
   process.exit(1);
 }
 
