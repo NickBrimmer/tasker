@@ -9,7 +9,7 @@ import {
   Text,
   TextLink,
 } from "~/components";
-import { countTodosByStatus, findList, getAllLists } from "~/todos.server";
+import { countTodosByStatus, findList, getAllLists } from "~/database.server";
 import type { Route } from "./+types/layout";
 
 export async function loader({ params }: Route.LoaderArgs) {

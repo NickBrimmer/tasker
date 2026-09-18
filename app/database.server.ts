@@ -14,13 +14,13 @@ export type List = {
   name: string;
 };
 
-const lists: List[] = [
+const listsTable: List[] = [
   { slug: "inbox", name: "Inbox" },
   { slug: "someday", name: "Someday" },
 ];
 
 // this is your Todos - this is your DB!
-let todos: Todo[] = [
+let todosTable: Todo[] = [
   makeTodo("inbox", "React the React Docs", "Framework mode, not declaritive"),
   makeTodo("inbox", "rebuild tasker from a blank routes.ts", ""),
   makeTodo(
@@ -42,11 +42,11 @@ function makeTodo(listSlug: string, title: string, notes: string): Todo {
 }
 
 export function getAllLists(): List[] {
-  return lists;
+  return listsTable;
 }
 
 export function findList(slug: string): List | undefined {
-  return lists.find((list) => list.slug === slug);
+  return listsTable.find((list) => list.slug === slug);
 }
 
 export type GetTodosParams = {
@@ -55,21 +55,21 @@ export type GetTodosParams = {
 };
 
 export function getTodos(params: GetTodosParams): Todo[] {
-  return todos
+  return todosTable
     .filter((todo) => todo.listSlug === params.listSlug)
     .filter((todo) => (params.status ? todo.status === params.status : true))
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
 
 export function findById(id: string): Todo | undefined {
-  return todos.find((todo) => todo.id === id);
+  return todosTable.find((todo) => todo.id === id);
 }
 
 export function countTodosByStatus(listSlug: string): {
   open: number;
   done: number;
 } {
-  const inList = todos.filter((todo) => todo.listSlug === listSlug);
+  const inList = todosTable.filter((todo) => todo.listSlug === listSlug);
 
   return {
     open: inList.filter((todo) => todo.status === "open").length,
@@ -79,7 +79,7 @@ export function countTodosByStatus(listSlug: string): {
 
 export function addItem(listSlug: string, title: string): Todo {
   const todo = makeTodo(listSlug, title, "");
-  todos.push(todo);
+  todosTable.push(todo);
 
   return todo;
 }
@@ -92,7 +92,7 @@ export function toggleTodo(id: string): void {
 }
 
 export function deleteById(id: string): void {
-  todos = todos.filter((todo) => todo.id !== id);
+  todosTable = todosTable.filter((todo) => todo.id !== id);
 }
 
 export type UpdateTodoParams = {

@@ -7,7 +7,7 @@ import {
   getTodos,
   toggleTodo,
   updateById,
-} from "./todos.server";
+} from "./database.server";
 
 test("adds a todo to the right list and leaves it open", () => {
   const todo = addItem("inbox", "Write a test");

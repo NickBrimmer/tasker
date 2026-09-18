@@ -21,7 +21,7 @@ import {
   toggleTodo,
   type Todo,
   type TodoStatus,
-} from "~/todos.server";
+} from "~/database.server";
 import type { Route } from "./+types/index";
 
 function parseStatus(value: string | null): TodoStatus | undefined {

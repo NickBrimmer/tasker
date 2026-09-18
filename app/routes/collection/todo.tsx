@@ -1,6 +1,6 @@
 import { href } from "react-router";
 import { Column, Heading, Muted, PageBody, Text, TextLink } from "~/components";
-import { findById } from "~/todos.server";
+import { findById } from "~/database.server";
 import type { Route } from "./+types/todo";
 
 export async function loader({ params }: Route.LoaderArgs) {

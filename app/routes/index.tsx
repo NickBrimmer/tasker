@@ -1,5 +1,5 @@
 import { href, redirect } from "react-router";
-import { getAllLists } from "~/todos.server";
+import { getAllLists } from "~/database.server";
 import type { Route } from "./+types/index";
 
 export async function loader(_: Route.LoaderArgs) {

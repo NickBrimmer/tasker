@@ -8,7 +8,7 @@ import {
   Textarea,
   TextLink,
 } from "~/components";
-import { findById, updateById } from "~/todos.server";
+import { findById, updateById } from "~/database.server";
 import type { Route } from "./+types/edit";
 
 const editSchema = z.object({

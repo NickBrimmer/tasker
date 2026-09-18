@@ -35,7 +35,7 @@ export default function Home() {
 `;
 
 await rm("app/routes", { recursive: true, force: true });
-await rm("app/todos.server.ts", { force: true });
+await rm("app/database.server.ts", { force: true });
 await mkdir("app/routes", { recursive: true });
 
 await Bun.write("app/routes.ts", ROUTES_TS);
