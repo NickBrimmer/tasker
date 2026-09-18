@@ -34,7 +34,7 @@ export default function ListLayout({ loaderData }: Route.ComponentProps) {
             {loaderData.lists.map((list) => (
               <TabLink
                 key={list.slug}
-                to={href("/list/:listSlug", { listSlug: list.slug })}
+                to={href("/collection/:listSlug", { listSlug: list.slug })}
                 end
               >
                 {list.name}

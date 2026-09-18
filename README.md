@@ -18,7 +18,7 @@ bun run reset    # wipe the daily surface, back to a blank slate
 
 **30 minutes.** If a thing can't be typed from a blank file in that window, it doesn't belong in Tier 1. That rules out a database, auth, and anything with a schema.
 
-**The lab principle.** Where a version or tool upgrade is coming at work, Tasker sits at work's *current* version so the migration itself becomes a kata — practised small and low-stakes before it has to happen for real. See [Upgrade katas](#upgrade-katas).
+**The lab principle.** Where a version or tool upgrade is coming at work, Tasker sits at work's _current_ version so the migration itself becomes a kata — practised small and low-stakes before it has to happen for real. See [Upgrade katas](#upgrade-katas).
 
 ---
 
@@ -36,16 +36,16 @@ The store is a module-level array on the server — see `app/todos.server.ts`.
 
 Features picked by **which routing concept they force**, not by what a to-do app "should" have:
 
-| Feature | Routing concept it forces |
-| --- | --- |
-| List todos | `index()` route + `loader` + typed `Route.ComponentProps` |
-| Add a todo | `action` + `<Form method="post">` + revalidation |
-| Toggle done | `useFetcher` — a mutation with **no navigation** |
-| Delete a todo | fetcher with an `intent` field — two actions, one route |
+| Feature          | Routing concept it forces                                                |
+| ---------------- | ------------------------------------------------------------------------ |
+| List todos       | `index()` route + `loader` + typed `Route.ComponentProps`                |
+| Add a todo       | `action` + `<Form method="post">` + revalidation                         |
+| Toggle done      | `useFetcher` — a mutation with **no navigation**                         |
+| Delete a todo    | fetcher with an `intent` field — two actions, one route                  |
 | Todo detail page | dynamic segment `:todoId`, `params` typing, 404 via `throw new Response` |
-| Edit + save | `redirect()` out of an action, `href()` for the target |
-| Filter by status | search params as state — `?status=open` |
-| Multiple lists | nested layout route + `<Outlet />` + which loader revalidates |
+| Edit + save      | `redirect()` out of an action, `href()` for the target                   |
+| Filter by status | search params as state — `?status=open`                                  |
+| Multiple lists   | nested layout route + `<Outlet />` + which loader revalidates            |
 
 Deliberately absent: tags/many-to-many, due dates, priorities, drag-and-drop, auth. None of them teach routing.
 
@@ -55,16 +55,16 @@ Deliberately absent: tags/many-to-many, due dates, priorities, drag-and-drop, au
 
 Each level is a full app you could stop at. **Build from a blank `routes.ts` each time, through the level you're on.** Repeat a level until it's boring, then move up — L1–L3 being automatic is worth more than having touched L8 once.
 
-| # | Build this | New concept | Answer key |
-| --- | --- | --- | --- |
-| **L1** | One route. Loader returns the array; `<Form method="post">` adds a todo. | `routes.ts` · `loader` · `action` · `Route.LoaderArgs` | `app/routes/list/index.tsx` |
-| **L2** | Add `/todo/:todoId`. Link from the list; 404 on a bad id. | dynamic params · `href()` typed links · `throw new Response` | `app/routes/list/todo.tsx` |
-| **L3** | Wrap in a layout route with a header + `<Outlet />`. Layout gets its own loader (a count). | nested routes · nested loaders · what revalidates | `app/routes/list/layout.tsx` |
-| **L4** | Toggle done inline — no navigation, no full reload. First `bun test`. | `useFetcher` · optimistic UI from `fetcher.formData` | `TodoRow` in `app/routes/list/index.tsx` |
-| **L5** | `?status=open` filter that survives reload and is linkable. | search params in the loader · `useSearchParams` | `loader` in `app/routes/list/index.tsx` |
-| **L6** | Edit page that saves and redirects back. Zod-validate the title; show a field error. | `redirect()` from an action · returning errors from an action | `app/routes/list/edit.tsx` |
-| **L7** | Break it on purpose. Add an `ErrorBoundary` and a pending state. | `ErrorBoundary` · `useNavigation` pending UI | `ErrorBoundary` in `app/routes/list/layout.tsx` |
-| **L8** | Split lists: `/list/:listSlug` layout, list picker at `/`. | nested `route()` · index redirect · param-scoped loaders | `app/routes.ts` + `app/routes/index.tsx` |
+| #      | Build this                                                                                 | New concept                                                   | Answer key                                      |
+| ------ | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------- | ----------------------------------------------- |
+| **L1** | One route. Loader returns the array; `<Form method="post">` adds a todo.                   | `routes.ts` · `loader` · `action` · `Route.LoaderArgs`        | `app/routes/list/index.tsx`                     |
+| **L2** | Add `/todo/:todoId`. Link from the list; 404 on a bad id.                                  | dynamic params · `href()` typed links · `throw new Response`  | `app/routes/list/todo.tsx`                      |
+| **L3** | Wrap in a layout route with a header + `<Outlet />`. Layout gets its own loader (a count). | nested routes · nested loaders · what revalidates             | `app/routes/list/layout.tsx`                    |
+| **L4** | Toggle done inline — no navigation, no full reload. First `bun test`.                      | `useFetcher` · optimistic UI from `fetcher.formData`          | `TodoRow` in `app/routes/list/index.tsx`        |
+| **L5** | `?status=open` filter that survives reload and is linkable.                                | search params in the loader · `useSearchParams`               | `loader` in `app/routes/list/index.tsx`         |
+| **L6** | Edit page that saves and redirects back. Zod-validate the title; show a field error.       | `redirect()` from an action · returning errors from an action | `app/routes/list/edit.tsx`                      |
+| **L7** | Break it on purpose. Add an `ErrorBoundary` and a pending state.                           | `ErrorBoundary` · `useNavigation` pending UI                  | `ErrorBoundary` in `app/routes/list/layout.tsx` |
+| **L8** | Split lists: `/list/:listSlug` layout, list picker at `/`.                                 | nested `route()` · index redirect · param-scoped loaders      | `app/routes.ts` + `app/routes/index.tsx`        |
 
 Read the answer key without disturbing your working tree:
 
@@ -75,9 +75,9 @@ git diff reference -- app/routes      # how today's attempt differs
 
 ### Two things worth internalising
 
-**Typesafety runs through all eight levels.** `+types/<name>` files are *generated*, never hand-written — `bun run check` runs `react-router typegen && tsc`. `Route.LoaderArgs`, `Route.ActionArgs` and `Route.ComponentProps` come from there, and `href()` is type-checked against `routes.ts`, so a renamed route breaks the build instead of 404ing at runtime. That clicks on L2.
+**Typesafety runs through all eight levels.** `+types/<name>` files are _generated_, never hand-written — `bun run check` runs `react-router typegen && tsc`. `Route.LoaderArgs`, `Route.ActionArgs` and `Route.ComponentProps` come from there, and `href()` is type-checked against `routes.ts`, so a renamed route breaks the build instead of 404ing at runtime. That clicks on L2.
 
-**The `?index` gotcha.** When an index route and its parent layout share a URL, a POST to that URL is ambiguous and React Router resolves it to the *parent*. `<Form>` handles this for you — it renders `action="/list/inbox?index"` — but a hand-written `fetch`/`curl` to `/list/inbox` hits the layout, which has no action, and returns **405 Method Not Allowed**. If an action mysteriously doesn't run, check for the missing `?index`.
+**The `?index` gotcha.** When an index route and its parent layout share a URL, a POST to that URL is ambiguous and React Router resolves it to the _parent_. `<Form>` handles this for you — it renders `action="/list/inbox?index"` — but a hand-written `fetch`/`curl` to `/list/inbox` hits the layout, which has no action, and returns **405 Method Not Allowed**. If an action mysteriously doesn't run, check for the missing `?index`.
 
 ---
 
@@ -104,13 +104,14 @@ Delete-and-rewrite in one repo rather than re-scaffolding. What makes that work 
 `bun run reset` clears the daily surface and writes back a blank `routes.ts` plus a stub `home.tsx` — a two-second clean slate.
 
 > **Tag the reference before your first reset**, or the answer key is gone:
+>
 > ```bash
 > git tag reference        # points at the finished L1–L8 build
 > bun run reset
 > git add -A && git commit -m "clean slate"
 > ```
 
-**Git as the practice log:** one commit per session — `day 014 — L3 nested layouts (28 min)` — then `git tag day-014`. The tag list *is* the log.
+**Git as the practice log:** one commit per session — `day 014 — L3 nested layouts (28 min)` — then `git tag day-014`. The tag list _is_ the log.
 
 **Other things that keep the box at 30 minutes:**
 
@@ -132,9 +133,9 @@ git worktree add ../tasker-master master   # master checked out at ../tasker-mas
 code --add ../tasker-master                # adds it as a second root folder in the current VS Code window
 ```
 
-Then **File → Save Workspace As…**, saved *outside* both folders (`~/Developer/tasker.code-workspace`) — dropped inside either one it shows up as an untracked file.
+Then **File → Save Workspace As…**, saved _outside_ both folders (`~/Developer/tasker.code-workspace`) — dropped inside either one it shows up as an untracked file.
 
-**Start the branch with the work stripped back out.** Branching off `master` hands you the files already written, so start from the commit *before* whatever you want to redo — `6f2bb20` (`t-2-dependencies-and-base-colors`) is the last one before the components existed:
+**Start the branch with the work stripped back out.** Branching off `master` hands you the files already written, so start from the commit _before_ whatever you want to redo — `6f2bb20` (`t-2-dependencies-and-base-colors`) is the last one before the components existed:
 
 ```bash
 git switch --detach 6f2bb20   # step off the branch; git won't delete the one you're standing on
@@ -190,19 +191,23 @@ Roughly ordered. Each is its own tier, to plan properly when I get there.
 
 ### Upgrade katas
 
-- **React Router 7 → 8.** Do it here first, then at work. `bun run dev` already prints the migration checklist for free — RR 7.18 emits five future-flag warnings, each naming a behaviour change and the flag to opt in early: `v8_middleware`, `v8_splitRouteModules`, `v8_viteEnvironmentApi`, `v8_passThroughRequests`, `v8_trailingSlashAwareDataRequests`. Flipping them on one at a time *is* the kata.
+- **React Router 7 → 8.** Do it here first, then at work. `bun run dev` already prints the migration checklist for free — RR 7.18 emits five future-flag warnings, each naming a behaviour change and the flag to opt in early: `v8_middleware`, `v8_splitRouteModules`, `v8_viteEnvironmentApi`, `v8_passThroughRequests`, `v8_trailingSlashAwareDataRequests`. Flipping them on one at a time _is_ the kata.
 - **TypeScript upgrade.** Pinned at `^6.0.3` here, deliberately ahead of work. Next kata is 6 → 7 — TS 7 is the native Go port, the more consequential jump.
 
 ### Persistence without a DB
+
 JSON file via `Bun.file` / `Bun.write`. Removes the HMR-reset annoyance, makes you think about read/write races, and is a real Bun API rep.
 
 ### Custom loader/action wrappers
+
 The patterns I use daily at work, once raw loaders/actions are automatic:
+
 - A typed `createAction(schema)` + `useAction(href)` pair wrapping `useFetcher`, so actions are Zod-validated at the boundary and callers never read a result.
 - **Loader-only routes** with no default export, fetched on demand by a `useLoader(href, { disabled })` hook — the pattern behind data-fetching modals and pickers. No equivalent in the React Router docs, so worth its own tier.
 - Server-function test harnesses that call a route's `loader`/`action` directly with a session cookie, no browser.
 
 ### Kysely + pglite
+
 The real database tier. pglite means no Docker and no Postgres service, so a rebuild stays viable. Rough ladder:
 
 1. `selectFrom` / `where` / `orderBy`
@@ -216,20 +221,22 @@ The real database tier. pglite means no Docker and no Postgres service, so a reb
 Rungs 6 and 7 are where production style diverges most from generic Kysely tutorials. Schema would grow to roughly `users` / `sessions` / `lists` / `todos` — enough for a slug-routed access gate.
 
 ### CSV uploads
+
 Upload-endpoint practice: `multipart/form-data` in an action, streaming vs. buffering, parsing, per-row validation, reporting row errors to the UI, and the map → review → import flow shape. After Kysely, so imported rows have somewhere to land.
 
 ### Background worker — "Upload v2"
-A second process polling a `tasks` table, processing uploads in the background instead of in the request. No Redis, no SQS — the DB table *is* the queue. Smallest honest version is a `tasks` table, a `bun run worker` polling loop, and one executor. Needs Kysely and CSV upload first.
+
+A second process polling a `tasks` table, processing uploads in the background instead of in the request. No Redis, no SQS — the DB table _is_ the queue. Smallest honest version is a `tasks` table, a `bun run worker` polling loop, and one executor. Needs Kysely and CSV upload first.
 
 ---
 
 ## Open questions
 
-| Question | Notes |
-| --- | --- |
-| TS 6 now, or start at 5.9.3 to match work? | Running on 6. Starting at 5.9.3 would add a 5.9 → 6 kata instead. One-line change whenever. |
-| Repeat-until-boring, or move up a level each day? | Leaning repeat-until-boring. |
-| Tailwind, or plain CSS? | Template includes it; leaving it rather than spending time removing it. Just not using it much. |
+| Question                                          | Notes                                                                                           |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| TS 6 now, or start at 5.9.3 to match work?        | Running on 6. Starting at 5.9.3 would add a 5.9 → 6 kata instead. One-line change whenever.     |
+| Repeat-until-boring, or move up a level each day? | Leaning repeat-until-boring.                                                                    |
+| Tailwind, or plain CSS?                           | Template includes it; leaving it rather than spending time removing it. Just not using it much. |
 
 ---
 
@@ -239,6 +246,6 @@ All eight levels are implemented and committed as the reference build. Verified:
 
 Exercised end-to-end against the dev server — redirect from `/`, 404s on bad list / bad todo / cross-list access, add, toggle, both filters, both Zod error branches, successful save + redirect, and nested layout counts revalidating after every mutation.
 
-**Delete is the exception.** The earlier claim that it was exercised end-to-end was wrong: the fetcher form posted a second `id` field instead of `intent`, so the action matched no branch and delete silently did nothing. `deleteTodo` itself was always correct and always covered by `bun test` — the break was in the form wiring, which nothing tests. Fixed, but not yet re-run against the dev server.
+**Delete is the exception.** The earlier claim that it was exercised end-to-end was wrong: the fetcher form posted a second `id` field instead of `intent`, so the action matched no branch and delete silently did nothing. `deleteById` itself was always correct and always covered by `bun test` — the break was in the form wiring, which nothing tests. Fixed, but not yet re-run against the dev server.
 
 Not yet verified in a browser: delete, the optimistic toggle, pending button states, and `NavLink` active styling are server-correct but visually unconfirmed.

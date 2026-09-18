@@ -15,8 +15,8 @@ import {
   TitleLink,
 } from "~/components";
 import {
-  addTodo,
-  deleteTodo,
+  addItem,
+  deleteById,
   getTodos,
   toggleTodo,
   type Todo,
@@ -43,13 +43,13 @@ export async function action({ params, request }: Route.ActionArgs) {
 
   if (intent === "add") {
     const title = String(formData.get("title") ?? "").trim();
-    if (title) addTodo(params.listSlug, title);
+    if (title) addItem(params.listSlug, title);
     return null;
   }
 
   const id = String(formData.get("id") ?? "");
   if (intent === "toggle") toggleTodo(id);
-  if (intent === "delete") deleteTodo(id);
+  if (intent === "delete") deleteById(id);
 
   return null;
 }
@@ -150,7 +150,7 @@ function TodoRow(props: TodoRowProps) {
       </fetcher.Form>
 
       <TitleLink
-        to={href("/list/:listSlug/todo/:todoId", {
+        to={href("/collection/:listSlug/todo/:todoId", {
           listSlug: props.listSlug,
           todoId: props.todo.id,
         })}

@@ -8,7 +8,7 @@ import {
   Textarea,
   TextLink,
 } from "~/components";
-import { findTodo, updateTodo } from "~/todos.server";
+import { findById, updateById } from "~/todos.server";
 import type { Route } from "./+types/edit";
 
 const editSchema = z.object({
@@ -21,7 +21,7 @@ const editSchema = z.object({
 });
 
 export async function loader({ params }: Route.LoaderArgs) {
-  const todo = findTodo(params.todoId);
+  const todo = findById(params.todoId);
   // Thrown, not returned: it unwinds past this loader to the nearest ErrorBoundary.
   if (!todo || todo.listSlug !== params.listSlug)
     throw new Response("Todo not found", { status: 404 });
@@ -30,7 +30,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 }
 
 export async function action({ params, request }: Route.ActionArgs) {
-  const todo = findTodo(params.todoId);
+  const todo = findById(params.todoId);
   if (!todo || todo.listSlug !== params.listSlug)
     throw new Response("Todo not found", { status: 404 });
 
@@ -45,14 +45,14 @@ export async function action({ params, request }: Route.ActionArgs) {
     return { fieldErrors };
   }
 
-  updateTodo({
+  updateById({
     id: todo.id,
     title: parsed.data.title,
     notes: parsed.data.notes,
   });
 
   return redirect(
-    href("/list/:listSlug/todo/:todoId", {
+    href("/collection/:listSlug/todo/:todoId", {
       listSlug: params.listSlug,
       todoId: todo.id,
     }),
@@ -73,7 +73,7 @@ export default function EditTodo({
     <PageBody>
       <Column gap={4}>
         <TextLink
-          to={href("/list/:listSlug/todo/:todoId", {
+          to={href("/collection/:listSlug/todo/:todoId", {
             listSlug: params.listSlug,
             todoId: loaderData.todo.id,
           })}

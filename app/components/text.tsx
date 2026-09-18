@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { cx } from "./cx";
+import { cx } from "../utils/cx";
 
 const HEADING = {
   lg: "text-lg font-semibold",

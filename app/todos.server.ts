@@ -61,7 +61,7 @@ export function getTodos(params: GetTodosParams): Todo[] {
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
 
-export function findTodo(id: string): Todo | undefined {
+export function findById(id: string): Todo | undefined {
   return todos.find((todo) => todo.id === id);
 }
 
@@ -77,7 +77,7 @@ export function countTodosByStatus(listSlug: string): {
   };
 }
 
-export function addTodo(listSlug: string, title: string): Todo {
+export function addItem(listSlug: string, title: string): Todo {
   const todo = makeTodo(listSlug, title, "");
   todos.push(todo);
 
@@ -85,13 +85,13 @@ export function addTodo(listSlug: string, title: string): Todo {
 }
 
 export function toggleTodo(id: string): void {
-  const todo = findTodo(id);
+  const todo = findById(id);
   if (!todo) return;
 
   todo.status = todo.status === "open" ? "done" : "open";
 }
 
-export function deleteTodo(id: string): void {
+export function deleteById(id: string): void {
   todos = todos.filter((todo) => todo.id !== id);
 }
 
@@ -101,8 +101,8 @@ export type UpdateTodoParams = {
   notes: string;
 };
 
-export function updateTodo(params: UpdateTodoParams): void {
-  const todo = findTodo(params.id);
+export function updateById(params: UpdateTodoParams): void {
+  const todo = findById(params.id);
   if (!todo) return;
 
   todo.title = params.title;

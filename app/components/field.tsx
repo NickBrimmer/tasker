@@ -1,5 +1,5 @@
 import type { ComponentProps, ReactNode } from "react";
-import { cx } from "./cx";
+import { cx } from "../utils/cx";
 
 const CONTROL =
   "rounded border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500";

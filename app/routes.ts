@@ -5,8 +5,8 @@ export default [
   index("routes/index.tsx"),
 
   // route(path, file, children?) — path first, module second; children's paths are relative to this one.
-  route("list/:listSlug", "routes/list/layout.tsx", [
-    // A child index fills its parent's <Outlet /> at /list/:listSlug with nothing appended.
+  route("collection/:listSlug", "routes/list/layout.tsx", [
+    // A child index fills its parent's <Outlet /> at /collection/:listSlug with nothing appended.
     index("routes/list/index.tsx"),
     route("todo/:todoId", "routes/list/todo.tsx"),
     route("todo/:todoId/edit", "routes/list/edit.tsx"),

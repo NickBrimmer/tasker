@@ -1,4 +1,4 @@
-export { cx } from "./cx";
+export { cx } from "../utils/cx";
 export { Page, PageHeader, PageBody, Row, Column } from "./layout-components";
 export { Heading, Text, Muted } from "./text";
 export { Button, CheckButton } from "./button";

@@ -1,6 +1,6 @@
 import type { ComponentProps, ReactNode } from "react";
 import { Link, NavLink } from "react-router";
-import { cx } from "./cx";
+import { cx } from "../utils/cx";
 
 const ACTIVE = "font-semibold text-gray-900 dark:text-gray-100";
 const INACTIVE =

@@ -1,11 +1,11 @@
 import { href } from "react-router";
 import { Column, Heading, Muted, PageBody, Text, TextLink } from "~/components";
-import { findTodo } from "~/todos.server";
+import { findById } from "~/todos.server";
 import type { Route } from "./+types/todo";
 
 export async function loader({ params }: Route.LoaderArgs) {
   // grabbing the todo id from the URL
-  const todo = findTodo(params.todoId);
+  const todo = findById(params.todoId);
 
   // Thrown, not returned: it unwinds past this loader to the nearest ErrorBoundary.
   if (!todo || todo.listSlug !== params.listSlug)
@@ -23,7 +23,9 @@ export default function TodoDetail({
   return (
     <PageBody>
       <Column gap={4}>
-        <TextLink to={href("/list/:listSlug", { listSlug: params.listSlug })}>
+        <TextLink
+          to={href("/collection/:listSlug", { listSlug: params.listSlug })}
+        >
           Back
         </TextLink>
 
@@ -38,7 +40,7 @@ export default function TodoDetail({
         <Text pre>{loaderData.todo.notes || <Muted>No notes.</Muted>}</Text>
 
         <TextLink
-          to={href("/list/:listSlug/todo/:todoId/edit", {
+          to={href("/collection/:listSlug/todo/:todoId/edit", {
             listSlug: params.listSlug,
             todoId: loaderData.todo.id,
           })}

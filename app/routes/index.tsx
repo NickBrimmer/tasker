@@ -9,5 +9,5 @@ export async function loader(_: Route.LoaderArgs) {
 
   // href(pattern, params) builds the URL, type-checked against routes.ts rather than hand-written.
   // redirect(url) only *returns* a 302 Response — the router sees it and navigates; nothing moves here.
-  return redirect(href("/list/:listSlug", { listSlug: firstList.slug }));
+  return redirect(href("/collection/:listSlug", { listSlug: firstList.slug }));
 }
