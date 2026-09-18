@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { cx } from "./cx";
+import { cx } from "../utils/cx";
 
 const GAP = {
   0: "gap-0",
@@ -23,7 +23,7 @@ export function Page({ children, className }: BoxProps) {
   );
 }
 
-export function Header({ children, className }: BoxProps) {
+export function PageHeader({ children, className }: BoxProps) {
   return (
     <header
       className={cx(
@@ -36,7 +36,7 @@ export function Header({ children, className }: BoxProps) {
   );
 }
 
-export function Main({ children, className }: BoxProps) {
+export function PageBody({ children, className }: BoxProps) {
   return <main className={cx("mt-6", className)}>{children}</main>;
 }
 
@@ -52,15 +52,7 @@ export function Row({ children, gap = 3, className }: FlexProps) {
   );
 }
 
-export function Nav({ children, gap = 3, className }: FlexProps) {
-  return (
-    <nav className={cx("flex items-center", GAP[gap], className)}>
-      {children}
-    </nav>
-  );
-}
-
-export function Stack({ children, gap = 4, className }: FlexProps) {
+export function Column({ children, gap = 4, className }: FlexProps) {
   return (
     <div className={cx("flex flex-col", GAP[gap], className)}>{children}</div>
   );

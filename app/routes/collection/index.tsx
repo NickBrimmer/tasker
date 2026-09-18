@@ -3,24 +3,25 @@ import { Form, href, useFetcher, useNavigation } from "react-router";
 import {
   Button,
   CheckButton,
+  Column,
   Hidden,
   Input,
-  Item,
   List,
-  Main,
+  ListRow,
+  PageBody,
   Row,
-  Stack,
   TabLink,
-  TextLink,
+  Tabs,
+  TitleLink,
 } from "~/components";
 import {
-  addTodo,
-  deleteTodo,
-  listTodos,
+  addItem,
+  deleteById,
+  getTodos,
   toggleTodo,
   type Todo,
   type TodoStatus,
-} from "~/todos.server";
+} from "~/database.server";
 import type { Route } from "./+types/index";
 
 function parseStatus(value: string | null): TodoStatus | undefined {
@@ -31,7 +32,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   const status = parseStatus(new URL(request.url).searchParams.get("status"));
 
   return {
-    todos: listTodos({ listSlug: params.slug, status }),
+    todos: getTodos({ listSlug: params.listSlug, status }),
     status: status ?? null,
   };
 }
@@ -42,34 +43,44 @@ export async function action({ params, request }: Route.ActionArgs) {
 
   if (intent === "add") {
     const title = String(formData.get("title") ?? "").trim();
-    if (title) addTodo(params.slug, title);
+    if (title) addItem(params.listSlug, title);
     return null;
   }
 
   const id = String(formData.get("id") ?? "");
   if (intent === "toggle") toggleTodo(id);
-  if (intent === "delete") deleteTodo(id);
+  if (intent === "delete") deleteById(id);
 
   return null;
 }
 
-type FilterLinkProps = {
+const STATUS_TABS: { value: TodoStatus | null; label: string }[] = [
+  { value: null, label: "All" },
+  { value: "open", label: "Open" },
+  { value: "done", label: "Done" },
+];
+
+type StatusTabsProps = {
   current: TodoStatus | null;
-  value: TodoStatus | null;
-  label: string;
 };
 
-function FilterLink(props: FilterLinkProps) {
+function StatusTabs(props: StatusTabsProps) {
   return (
-    <TabLink
-      to={props.value ? `?status=${props.value}` : "?"}
-      active={props.current === props.value}
-    >
-      {props.label}
-    </TabLink>
+    <Tabs>
+      {STATUS_TABS.map((tab) => (
+        <TabLink
+          key={tab.label}
+          to={tab.value ? `?status=${tab.value}` : "?"}
+          active={props.current === tab.value}
+        >
+          {tab.label}
+        </TabLink>
+      ))}
+    </Tabs>
   );
 }
 
+// Typegen's props for this route: typed loaderData, actionData, params, matches.
 export default function ListIndex({ loaderData }: Route.ComponentProps) {
   const navigation = useNavigation();
   const formRef = useRef<HTMLFormElement>(null);
@@ -81,8 +92,8 @@ export default function ListIndex({ loaderData }: Route.ComponentProps) {
   }, [isAdding]);
 
   return (
-    <Main>
-      <Stack gap={4}>
+    <PageBody>
+      <Column gap={4}>
         <Form ref={formRef} method="post">
           <Row gap={2}>
             <Hidden name="intent" value="add" />
@@ -100,28 +111,26 @@ export default function ListIndex({ loaderData }: Route.ComponentProps) {
           </Row>
         </Form>
 
-        <Row>
-          <FilterLink current={loaderData.status} value={null} label="All" />
-          <FilterLink current={loaderData.status} value="open" label="Open" />
-          <FilterLink current={loaderData.status} value="done" label="Done" />
-        </Row>
+        <StatusTabs current={loaderData.status} />
 
         <List>
           {loaderData.todos.map((todo) => (
-            <TodoRow key={todo.id} todo={todo} slug={todo.listSlug} />
+            <TodoRow key={todo.id} todo={todo} listSlug={todo.listSlug} />
           ))}
         </List>
-      </Stack>
-    </Main>
+      </Column>
+    </PageBody>
   );
 }
 
 type TodoRowProps = {
   todo: Todo;
-  slug: string;
+  listSlug: string;
 };
 
 function TodoRow(props: TodoRowProps) {
+  // useFetcher submits to this route's action without navigating: no URL change,
+  // no loading state on the page, and every row gets its own independent fetcher.
   const fetcher = useFetcher();
 
   const pendingIntent = fetcher.formData?.get("intent");
@@ -133,24 +142,22 @@ function TodoRow(props: TodoRowProps) {
   if (pendingIntent === "delete") return null;
 
   return (
-    <Item>
+    <ListRow>
       <fetcher.Form method="post">
         <Hidden name="id" value={props.todo.id} />
         <Hidden name="intent" value="toggle" />
         <CheckButton checked={isDone} label={props.todo.title} />
       </fetcher.Form>
 
-      <TextLink
-        to={href("/list/:slug/todo/:todoId", {
-          slug: props.slug,
+      <TitleLink
+        to={href("/collection/:listSlug/todo/:todoId", {
+          listSlug: props.listSlug,
           todoId: props.todo.id,
         })}
-        tone="normal"
-        grow
         strike={isDone}
       >
         {props.todo.title}
-      </TextLink>
+      </TitleLink>
 
       <fetcher.Form method="post">
         <Hidden name="id" value={props.todo.id} />
@@ -159,6 +166,6 @@ function TodoRow(props: TodoRowProps) {
           Delete
         </Button>
       </fetcher.Form>
-    </Item>
+    </ListRow>
   );
 }

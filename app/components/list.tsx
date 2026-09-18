@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { cx } from "./cx";
+import { cx } from "../utils/cx";
 
 type ListProps = {
   children: ReactNode;
@@ -16,7 +16,7 @@ export function List({ children, className }: ListProps) {
   );
 }
 
-export function Item({ children, className }: ListProps) {
+export function ListRow({ children, className }: ListProps) {
   return (
     <li className={cx("flex items-center gap-3 py-2", className)}>
       {children}

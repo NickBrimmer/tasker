@@ -14,22 +14,19 @@ export type List = {
   name: string;
 };
 
-const lists: List[] = [
+const listsTable: List[] = [
   { slug: "inbox", name: "Inbox" },
   { slug: "someday", name: "Someday" },
 ];
 
-let todos: Todo[] = [
-  makeTodo(
-    "inbox",
-    "Read the React Router routing docs",
-    "Framework mode, not declarative.",
-  ),
-  makeTodo("inbox", "Rebuild Tasker from a blank routes.ts", ""),
+// this is your Todos - this is your DB!
+let todosTable: Todo[] = [
+  makeTodo("inbox", "React the React Docs", "Framework mode, not declaritive"),
+  makeTodo("inbox", "rebuild tasker from a blank routes.ts", ""),
   makeTodo(
     "someday",
-    "Try the v8 future flags one at a time",
-    "bun dev prints all five.",
+    "try the v8 future flags one at a time",
+    "bun dev prints all five",
   ),
 ];
 
@@ -44,35 +41,35 @@ function makeTodo(listSlug: string, title: string, notes: string): Todo {
   };
 }
 
-export function listLists(): List[] {
-  return lists;
+export function getAllLists(): List[] {
+  return listsTable;
 }
 
-export function getList(slug: string): List | undefined {
-  return lists.find((list) => list.slug === slug);
+export function findList(slug: string): List | undefined {
+  return listsTable.find((list) => list.slug === slug);
 }
 
-export type ListTodosParams = {
+export type GetTodosParams = {
   listSlug: string;
   status?: TodoStatus;
 };
 
-export function listTodos(params: ListTodosParams): Todo[] {
-  return todos
+export function getTodos(params: GetTodosParams): Todo[] {
+  return todosTable
     .filter((todo) => todo.listSlug === params.listSlug)
     .filter((todo) => (params.status ? todo.status === params.status : true))
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
 
-export function getTodo(id: string): Todo | undefined {
-  return todos.find((todo) => todo.id === id);
+export function findById(id: string): Todo | undefined {
+  return todosTable.find((todo) => todo.id === id);
 }
 
-export function countByStatus(listSlug: string): {
+export function countTodosByStatus(listSlug: string): {
   open: number;
   done: number;
 } {
-  const inList = todos.filter((todo) => todo.listSlug === listSlug);
+  const inList = todosTable.filter((todo) => todo.listSlug === listSlug);
 
   return {
     open: inList.filter((todo) => todo.status === "open").length,
@@ -80,22 +77,22 @@ export function countByStatus(listSlug: string): {
   };
 }
 
-export function addTodo(listSlug: string, title: string): Todo {
+export function addItem(listSlug: string, title: string): Todo {
   const todo = makeTodo(listSlug, title, "");
-  todos.push(todo);
+  todosTable.push(todo);
 
   return todo;
 }
 
 export function toggleTodo(id: string): void {
-  const todo = getTodo(id);
+  const todo = findById(id);
   if (!todo) return;
 
   todo.status = todo.status === "open" ? "done" : "open";
 }
 
-export function deleteTodo(id: string): void {
-  todos = todos.filter((todo) => todo.id !== id);
+export function deleteById(id: string): void {
+  todosTable = todosTable.filter((todo) => todo.id !== id);
 }
 
 export type UpdateTodoParams = {
@@ -103,8 +100,9 @@ export type UpdateTodoParams = {
   title: string;
   notes: string;
 };
-export function updateTodo(params: UpdateTodoParams): void {
-  const todo = getTodo(params.id);
+
+export function updateById(params: UpdateTodoParams): void {
+  const todo = findById(params.id);
   if (!todo) return;
 
   todo.title = params.title;

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { cx } from "./cx";
+import { cx } from "../utils/cx";
 
 const HEADING = {
   lg: "text-lg font-semibold",
@@ -40,8 +40,4 @@ export function Text({ children, muted, pre, className }: TextProps) {
 
 export function Muted({ children }: { children: ReactNode }) {
   return <span className="text-gray-400 dark:text-gray-500">{children}</span>;
-}
-
-export function Empty({ children }: { children: ReactNode }) {
-  return <p className="text-sm text-gray-500 dark:text-gray-400">{children}</p>;
 }

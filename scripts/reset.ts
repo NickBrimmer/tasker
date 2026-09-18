@@ -5,7 +5,9 @@ const pkg = await Bun.file("package.json")
   .json()
   .catch(() => null);
 if (pkg?.name !== "tasker") {
-  console.error("refusing to run: no tasker package.json in the current dir");
+  console.error(
+    "refusing to run: no tasker package.json in the current directory",
+  );
   process.exit(1);
 }
 
@@ -33,7 +35,7 @@ export default function Home() {
 `;
 
 await rm("app/routes", { recursive: true, force: true });
-await rm("app/todos.server.ts", { force: true });
+await rm("app/database.server.ts", { force: true });
 await mkdir("app/routes", { recursive: true });
 
 await Bun.write("app/routes.ts", ROUTES_TS);
