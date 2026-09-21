@@ -45,6 +45,7 @@ export default function ListLayout({ loaderData }: Route.ComponentProps) {
           </Text>
         </Column>
       </PageHeader>
+      {/* Reads the route match one level below this layout and renders it: index, todo, or edit. */}
       <Outlet />
     </Page>
   );
