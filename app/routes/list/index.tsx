@@ -145,7 +145,7 @@ function TodoRow(props: TodoRowProps) {
       </fetcher.Form>
 
       <TitleLink
-        to={href("/collection/:listSlug/todo/:todoId", {
+        to={href("/list/:listSlug/todo/:todoId", {
           listSlug: props.listSlug,
           todoId: props.todo.id,
         })}

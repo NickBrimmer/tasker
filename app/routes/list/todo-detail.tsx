@@ -20,7 +20,7 @@ export default function TodoDetail({
     <PageBody>
       <Column gap={4}>
         <TextLink
-          to={href("/collection/:listSlug", { listSlug: params.listSlug })}
+          to={href("/list/:listSlug", { listSlug: params.listSlug })}
         >
           Back
         </TextLink>
@@ -37,7 +37,7 @@ export default function TodoDetail({
       <Text pre>{loaderData.todo.notes || <Muted>No notes</Muted>}</Text>
 
       <TextLink
-        to={href("/collection/:listSlug/todo/:todoId/edit", {
+        to={href("/list/:listSlug/todo/:todoId/edit", {
           listSlug: params.listSlug,
           todoId: loaderData.todo.id,
         })}

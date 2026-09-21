@@ -5,7 +5,7 @@ export default [
   index("routes/index.tsx"),
 
   // route(path, file, children?)
-  route("collection/:listSlug", "routes/list/list-layout.tsx", [
+  route("list/:listSlug", "routes/list/list-layout.tsx", [
     index("routes/list/index.tsx"),
     route("todo/:todoId", "routes/list/todo-detail.tsx"),
     route("todo/:todoId/edit", "routes/list/edit-detail.tsx"),

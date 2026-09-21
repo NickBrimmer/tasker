@@ -51,7 +51,7 @@ export async function action({ params, request }: Route.ActionArgs) {
   });
 
   return redirect(
-    href("/collection/:listSlug/todo/:todoId", {
+    href("/list/:listSlug/todo/:todoId", {
       listSlug: params.listSlug,
       todoId: todo.id,
     }),
@@ -71,7 +71,7 @@ export default function EditTodo({
     <PageBody>
       <Column gap={4}>
         <TextLink
-          to={href("/collection/:listSlug/todo/:todoId", {
+          to={href("/list/:listSlug/todo/:todoId", {
             listSlug: params.listSlug,
             todoId: loaderData.todo.id,
           })}

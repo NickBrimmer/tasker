@@ -7,5 +7,5 @@ export async function loader(_: Route.LoaderArgs) {
   const firstList = getAllLists()[0];
   if (!firstList) throw new Response("No Lists", { status: 404 });
 
-  return redirect(href("/collection/:listSlug", { listSlug: firstList.slug }));
+  return redirect(href("/list/:listSlug", { listSlug: firstList.slug }));
 }
