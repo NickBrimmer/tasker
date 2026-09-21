@@ -1,15 +1,13 @@
 import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
 export default [
-  // index(file) — renders at its parent's path exactly, adding no URL segment of its own.
+  //index(file) - renders at it's parent's path exactly, adding no URL of it's own
   index("routes/index.tsx"),
 
-  // route(path, file, children?) — path first, module second; children's paths are relative to this one.
-  route("collection/:listSlug", "routes/collection/layout.tsx", [
-    // A child index fills its parent's <Outlet /> at /collection/:listSlug with nothing appended.
-    index("routes/collection/index.tsx"),
-    route("todo/:todoId", "routes/collection/todo.tsx"),
-    route("todo/:todoId/edit", "routes/collection/edit.tsx"),
+  // route(path, file, children?)
+  route("collection/:listSlug", "routes/list/list-layout.tsx", [
+    index("routes/list/index.tsx"),
+    route("todo/:todoId", "routes/list/todo-detail.tsx"),
+    route("todo/:todoId/edit", "routes/list/edit-detail.tsx"),
   ]),
-  // satisfies (not `:`) type-checks the array while keeping its exact shape for typegen to read.
 ] satisfies RouteConfig;

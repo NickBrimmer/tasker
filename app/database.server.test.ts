@@ -4,7 +4,7 @@ import {
   countTodosByStatus,
   deleteById,
   findById,
-  getTodos,
+  getItemsByCategory,
   toggleTodo,
   updateById,
 } from "./database.server";
@@ -38,7 +38,7 @@ test("status filter returns only matching todos", () => {
   const done = addItem("inbox", "Already done");
   toggleTodo(done.id);
 
-  const doneIds = getTodos({ listSlug: "inbox", status: "done" }).map(
+  const doneIds = getItemsByCategory({ listSlug: "inbox", status: "done" }).map(
     (t) => t.id,
   );
   expect(doneIds).toContain(done.id);
@@ -51,10 +51,12 @@ test("status filter returns only matching todos", () => {
 test("todos are scoped to their list", () => {
   const todo = addItem("someday", "Not in the inbox");
 
-  expect(getTodos({ listSlug: "inbox" }).map((t) => t.id)).not.toContain(
-    todo.id,
-  );
-  expect(getTodos({ listSlug: "someday" }).map((t) => t.id)).toContain(todo.id);
+  expect(
+    getItemsByCategory({ listSlug: "inbox" }).map((t) => t.id),
+  ).not.toContain(todo.id);
+  expect(
+    getItemsByCategory({ listSlug: "someday" }).map((t) => t.id),
+  ).toContain(todo.id);
 
   deleteById(todo.id);
 });
