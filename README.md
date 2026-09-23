@@ -129,8 +129,8 @@ A second checkout of `master` in its own folder, so the finished code sits open 
 **Set it up:**
 
 ```bash
-git worktree add ../tasker-master master   # master checked out at ../tasker-master
-code --add ../tasker-master                # adds it as a second root folder in the current VS Code window
+git worktree add --detach ../tasker-master master   # without --detach this folder owns the branch and you can commit to it by accident
+code --add ../tasker-master                         # adds it as a second root folder in the current VS Code window
 ```
 
 Then **File → Save Workspace As…**, saved _outside_ both folders (`~/Developer/tasker.code-workspace`) — dropped inside either one it shows up as an untracked file.
@@ -150,6 +150,8 @@ git worktree remove ../tasker-master   # deletes the folder; refuses if you left
 git worktree list                      # should show only the main checkout
 git switch -c t-4 origin/master        # a fresh branch at master, to abandon a rewrite and start clean
 ```
+
+Nothing to re-attach — the detached HEAD lived in the folder you just deleted, and the main checkout was never detached. `git switch -` is for the other case, where you detached the main checkout by hand.
 
 **When it gets weird:**
 

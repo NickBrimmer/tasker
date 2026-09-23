@@ -14,22 +14,6 @@ export type List = {
   name: string;
 };
 
-const listsTable: List[] = [
-  { slug: "inbox", name: "Inbox" },
-  { slug: "someday", name: "Someday" },
-];
-
-// this is your Todos - this is your DB!
-let todosTable: Todo[] = [
-  makeTodo("inbox", "React the React Docs", "Framework mode, not declaritive"),
-  makeTodo("inbox", "rebuild tasker from a blank routes.ts", ""),
-  makeTodo(
-    "someday",
-    "try the v8 future flags one at a time",
-    "bun dev prints all five",
-  ),
-];
-
 function makeTodo(listSlug: string, title: string, notes: string): Todo {
   return {
     id: crypto.randomUUID(),
@@ -40,6 +24,22 @@ function makeTodo(listSlug: string, title: string, notes: string): Todo {
     createdAt: new Date(),
   };
 }
+// category seed data
+const listsTable: List[] = [
+  { slug: "inbox", name: "Inbox" },
+  { slug: "someday", name: "Someday" },
+];
+
+// this is your Todos table! This is your DB Table!
+let todosTable: Todo[] = [
+  makeTodo("inbox", "React the React Docs", "Framework mode, not declaritive"),
+  makeTodo("inbox", "rebuild tasker from a blank routes.ts", ""),
+  makeTodo(
+    "someday",
+    "try the v8 future flags one at a time",
+    "bun dev prints all five",
+  ),
+];
 
 export function getAllLists(): List[] {
   return listsTable;
@@ -49,12 +49,11 @@ export function findList(slug: string): List | undefined {
   return listsTable.find((list) => list.slug === slug);
 }
 
-export type GetTodosParams = {
+export type GetItemsByCategoryParams = {
   listSlug: string;
   status?: TodoStatus;
 };
-
-export function getTodos(params: GetTodosParams): Todo[] {
+export function getItemsByCategory(params: GetItemsByCategoryParams): Todo[] {
   return todosTable
     .filter((todo) => todo.listSlug === params.listSlug)
     .filter((todo) => (params.status ? todo.status === params.status : true))

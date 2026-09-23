@@ -17,7 +17,7 @@ import {
 import {
   addItem,
   deleteById,
-  getTodos,
+  getItemsByCategory,
   toggleTodo,
   type Todo,
   type TodoStatus,
@@ -32,7 +32,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   const status = parseStatus(new URL(request.url).searchParams.get("status"));
 
   return {
-    todos: getTodos({ listSlug: params.listSlug, status }),
+    todos: getItemsByCategory({ listSlug: params.listSlug, status }),
     status: status ?? null,
   };
 }
@@ -70,7 +70,7 @@ function StatusTabs(props: StatusTabsProps) {
       {STATUS_TABS.map((tab) => (
         <TabLink
           key={tab.label}
-          to={tab.value ? `?status=${tab.value}` : "?"}
+          to={tab.value ? `status=${tab.value}` : "?"}
           active={props.current === tab.value}
         >
           {tab.label}
@@ -80,7 +80,6 @@ function StatusTabs(props: StatusTabsProps) {
   );
 }
 
-// Typegen's props for this route: typed loaderData, actionData, params, matches.
 export default function ListIndex({ loaderData }: Route.ComponentProps) {
   const navigation = useNavigation();
   const formRef = useRef<HTMLFormElement>(null);
@@ -112,7 +111,6 @@ export default function ListIndex({ loaderData }: Route.ComponentProps) {
         </Form>
 
         <StatusTabs current={loaderData.status} />
-
         <List>
           {loaderData.todos.map((todo) => (
             <TodoRow key={todo.id} todo={todo} listSlug={todo.listSlug} />
@@ -129,10 +127,7 @@ type TodoRowProps = {
 };
 
 function TodoRow(props: TodoRowProps) {
-  // useFetcher submits to this route's action without navigating: no URL change,
-  // no loading state on the page, and every row gets its own independent fetcher.
   const fetcher = useFetcher();
-
   const pendingIntent = fetcher.formData?.get("intent");
   const isDone =
     pendingIntent === "toggle"
@@ -150,7 +145,7 @@ function TodoRow(props: TodoRowProps) {
       </fetcher.Form>
 
       <TitleLink
-        to={href("/collection/:listSlug/todo/:todoId", {
+        to={href("/list/:listSlug/todo/:todoId", {
           listSlug: props.listSlug,
           todoId: props.todo.id,
         })}

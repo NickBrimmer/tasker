@@ -9,20 +9,19 @@ import {
   TextLink,
 } from "~/components";
 import { findById, updateById } from "~/database.server";
-import type { Route } from "./+types/edit";
+import type { Route } from "./+types/edit-detail";
 
 const editSchema = z.object({
   title: z
     .string()
     .trim()
     .min(1, "Title is required")
-    .max(120, "keep it under 120 characters bud."),
-  notes: z.string().max(2000, "notes are too long."),
+    .max(120, "Keep it under 120 characters, bub."),
+  notes: z.string().max(2000, "Notes are too long."),
 });
 
 export async function loader({ params }: Route.LoaderArgs) {
   const todo = findById(params.todoId);
-  // Thrown, not returned: it unwinds past this loader to the nearest ErrorBoundary.
   if (!todo || todo.listSlug !== params.listSlug)
     throw new Response("Todo not found", { status: 404 });
 
@@ -52,14 +51,13 @@ export async function action({ params, request }: Route.ActionArgs) {
   });
 
   return redirect(
-    href("/collection/:listSlug/todo/:todoId", {
+    href("/list/:listSlug/todo/:todoId", {
       listSlug: params.listSlug,
       todoId: todo.id,
     }),
   );
 }
 
-// Typegen's props for this route: typed loaderData, actionData, params, matches.
 export default function EditTodo({
   actionData,
   loaderData,
@@ -73,11 +71,10 @@ export default function EditTodo({
     <PageBody>
       <Column gap={4}>
         <TextLink
-          to={href("/collection/:listSlug/todo/:todoId", {
+          to={href("/list/:listSlug/todo/:todoId", {
             listSlug: params.listSlug,
             todoId: loaderData.todo.id,
           })}
-          selfStart
         >
           Cancel
         </TextLink>
@@ -96,7 +93,7 @@ export default function EditTodo({
               defaultValue={loaderData.todo.notes}
               error={errors?.notes?.[0]}
             />
-            <Button pending={isSaving} pendingLabel="Saving..." selfStart>
+            <Button pending={isSaving} pendingLabel="saving..." selfStart>
               Save
             </Button>
           </Column>
