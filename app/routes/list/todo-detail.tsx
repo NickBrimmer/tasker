@@ -1,10 +1,10 @@
 import { href } from "react-router";
 import { Column, Heading, Muted, PageBody, Text, TextLink } from "~/components";
-import { findById } from "~/database.server";
+import { findItemById } from "~/database.server";
 import type { Route } from "./+types/todo-detail";
 
 export async function loader({ params }: Route.LoaderArgs) {
-  const todo = findById(params.todoId);
+  const todo = findItemById(params.todoId);
 
   if (!todo || todo.listSlug !== params.listSlug)
     throw new Response("Todo not found", { status: 404 });
@@ -19,9 +19,7 @@ export default function TodoDetail({
   return (
     <PageBody>
       <Column gap={4}>
-        <TextLink
-          to={href("/list/:listSlug", { listSlug: params.listSlug })}
-        >
+        <TextLink to={href("/list/:listSlug", { listSlug: params.listSlug })}>
           Back
         </TextLink>
 

@@ -8,7 +8,7 @@ import {
   Textarea,
   TextLink,
 } from "~/components";
-import { findById, updateById } from "~/database.server";
+import { findItemById, updateItemById } from "~/database.server";
 import type { Route } from "./+types/edit-detail";
 
 const editSchema = z.object({
@@ -21,7 +21,7 @@ const editSchema = z.object({
 });
 
 export async function loader({ params }: Route.LoaderArgs) {
-  const todo = findById(params.todoId);
+  const todo = findItemById(params.todoId);
   if (!todo || todo.listSlug !== params.listSlug)
     throw new Response("Todo not found", { status: 404 });
 
@@ -29,7 +29,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 }
 
 export async function action({ params, request }: Route.ActionArgs) {
-  const todo = findById(params.todoId);
+  const todo = findItemById(params.todoId);
   if (!todo || todo.listSlug !== params.listSlug)
     throw new Response("Todo not found", { status: 404 });
 
@@ -44,7 +44,7 @@ export async function action({ params, request }: Route.ActionArgs) {
     return { fieldErrors };
   }
 
-  updateById({
+  updateItemById({
     id: todo.id,
     title: parsed.data.title,
     notes: parsed.data.notes,
