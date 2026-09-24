@@ -14,7 +14,7 @@ export type List = {
   name: string;
 };
 
-function makeTodo(listSlug: string, title: string, notes: string): Todo {
+function makeItem(listSlug: string, title, notes: string): Todo {
   return {
     id: crypto.randomUUID(),
     listSlug,
@@ -24,17 +24,17 @@ function makeTodo(listSlug: string, title: string, notes: string): Todo {
     createdAt: new Date(),
   };
 }
-// category seed data
+
+//category seed data
 const listsTable: List[] = [
   { slug: "inbox", name: "Inbox" },
   { slug: "someday", name: "Someday" },
 ];
 
-// this is your Todos table! This is your DB Table!
 let todosTable: Todo[] = [
-  makeTodo("inbox", "React the React Docs", "Framework mode, not declaritive"),
-  makeTodo("inbox", "rebuild tasker from a blank routes.ts", ""),
-  makeTodo(
+  makeItem("inbox", "React the React Docs", "Framework mode, not declaritive"),
+  makeItem("inbox", "rebuild tasker from a blank routes.ts", ""),
+  makeItem(
     "someday",
     "try the v8 future flags one at a time",
     "bun dev prints all five",
@@ -53,6 +53,7 @@ export type GetItemsByCategoryParams = {
   listSlug: string;
   status?: TodoStatus;
 };
+
 export function getItemsByCategory(params: GetItemsByCategoryParams): Todo[] {
   return todosTable
     .filter((todo) => todo.listSlug === params.listSlug)
@@ -60,11 +61,11 @@ export function getItemsByCategory(params: GetItemsByCategoryParams): Todo[] {
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
 
-export function findById(id: string): Todo | undefined {
+export function findItemById(id: string): Todo | undefined {
   return todosTable.find((todo) => todo.id === id);
 }
 
-export function countTodosByStatus(listSlug: string): {
+export function countItemsByStatus(listSlug: string): {
   open: number;
   done: number;
 } {
@@ -77,20 +78,20 @@ export function countTodosByStatus(listSlug: string): {
 }
 
 export function addItem(listSlug: string, title: string): Todo {
-  const todo = makeTodo(listSlug, title, "");
+  const todo = makeItem(listSlug, title, "");
   todosTable.push(todo);
 
   return todo;
 }
 
-export function toggleTodo(id: string): void {
-  const todo = findById(id);
+export function toggleItemStatus(id: string): void {
+  const todo = findItemById(id);
   if (!todo) return;
 
   todo.status = todo.status === "open" ? "done" : "open";
 }
 
-export function deleteById(id: string): void {
+export function deleteItemById(id: string): void {
   todosTable = todosTable.filter((todo) => todo.id !== id);
 }
 
@@ -100,8 +101,8 @@ export type UpdateTodoParams = {
   notes: string;
 };
 
-export function updateById(params: UpdateTodoParams): void {
-  const todo = findById(params.id);
+export function updateItemById(params: UpdateTodoParams): void {
+  const todo = findItemById(params.id);
   if (!todo) return;
 
   todo.title = params.title;
