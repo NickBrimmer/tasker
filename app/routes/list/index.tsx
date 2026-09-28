@@ -16,9 +16,9 @@ import {
 } from "~/components";
 import {
   addItem,
-  deleteById,
+  deleteItemById,
   getItemsByCategory,
-  toggleTodo,
+  toggleItemStatus,
   type Todo,
   type TodoStatus,
 } from "~/database.server";
@@ -48,8 +48,8 @@ export async function action({ params, request }: Route.ActionArgs) {
   }
 
   const id = String(formData.get("id") ?? "");
-  if (intent === "toggle") toggleTodo(id);
-  if (intent === "delete") deleteById(id);
+  if (intent === "toggle") toggleItemStatus(id);
+  if (intent === "delete") deleteItemById(id);
 
   return null;
 }
@@ -59,6 +59,50 @@ const STATUS_TABS: { value: TodoStatus | null; label: string }[] = [
   { value: "open", label: "Open" },
   { value: "done", label: "Done" },
 ];
+
+type TodoRowProps = {
+  todo: Todo;
+  listSlug: string;
+};
+
+function TodoRow(props: TodoRowProps) {
+  const fetcher = useFetcher();
+  const pendingIntent = fetcher.formData?.get("intent");
+  const isDone =
+    pendingIntent === "toggle"
+      ? props.todo.status === "open"
+      : props.todo.status === "done";
+
+  if (pendingIntent === "delete") return null;
+
+  return (
+    <ListRow>
+      <fetcher.Form method="post">
+        <Hidden name="id" value={props.todo.id} />
+        <Hidden name="intent" value="toggle" />
+        <CheckButton checked={isDone} label={props.todo.title} />
+      </fetcher.Form>
+
+      <TitleLink
+        to={href("/list/:listSlug/todo/:todoId/edit", {
+          listSlug: props.listSlug,
+          todoId: props.todo.id,
+        })}
+        strike={isDone}
+      >
+        {props.todo.title}
+      </TitleLink>
+
+      <fetcher.Form method="post">
+        <Hidden name="id" value={props.todo.id} />
+        <Hidden name="intent" value="delete" />
+        <Button variant="ghost" danger size="sm">
+          Delete
+        </Button>
+      </fetcher.Form>
+    </ListRow>
+  );
+}
 
 type StatusTabsProps = {
   current: TodoStatus | null;
@@ -94,20 +138,18 @@ export default function ListIndex({ loaderData }: Route.ComponentProps) {
     <PageBody>
       <Column gap={4}>
         <Form ref={formRef} method="post">
-          <Row gap={2}>
-            <Hidden name="intent" value="add" />
-            <Input
-              name="title"
-              label="New Todo"
-              hideLabel
-              required
-              grow
-              placeholder="What needs doing?"
-            />
-            <Button pending={isAdding} pendingLabel="adding...">
-              Add
-            </Button>
-          </Row>
+          <Hidden name="intent" value="add" />
+          <Input
+            name="title"
+            label="New Todo"
+            hideLabel
+            required
+            grow
+            placeholder="What needs doing?"
+          />
+          <Button pending={isAdding} pendingLabel="adding...">
+            Add
+          </Button>
         </Form>
 
         <StatusTabs current={loaderData.status} />
@@ -118,49 +160,5 @@ export default function ListIndex({ loaderData }: Route.ComponentProps) {
         </List>
       </Column>
     </PageBody>
-  );
-}
-
-type TodoRowProps = {
-  todo: Todo;
-  listSlug: string;
-};
-
-function TodoRow(props: TodoRowProps) {
-  const fetcher = useFetcher();
-  const pendingIntent = fetcher.formData?.get("intent");
-  const isDone =
-    pendingIntent === "toggle"
-      ? props.todo.status === "open"
-      : props.todo.status === "done";
-
-  if (pendingIntent === "delete") return null;
-
-  return (
-    <ListRow>
-      <fetcher.Form method="post">
-        <Hidden name="id" value={props.todo.id} />
-        <Hidden name="intent" value="toggle" />
-        <CheckButton checked={isDone} label={props.todo.title} />
-      </fetcher.Form>
-
-      <TitleLink
-        to={href("/list/:listSlug/todo/:todoId", {
-          listSlug: props.listSlug,
-          todoId: props.todo.id,
-        })}
-        strike={isDone}
-      >
-        {props.todo.title}
-      </TitleLink>
-
-      <fetcher.Form method="post">
-        <Hidden name="id" value={props.todo.id} />
-        <Hidden name="intent" value="delete" />
-        <Button variant="ghost" danger size="sm">
-          Delete
-        </Button>
-      </fetcher.Form>
-    </ListRow>
   );
 }

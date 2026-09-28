@@ -9,7 +9,7 @@ import {
   Text,
   TextLink,
 } from "~/components";
-import { countTodosByStatus, findList, getAllLists } from "~/database.server";
+import { countItemsByStatus, findList, getAllLists } from "~/database.server";
 import type { Route } from "./+types/list-layout";
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -20,7 +20,7 @@ export async function loader({ params }: Route.LoaderArgs) {
   return {
     list,
     lists: getAllLists(),
-    counts: countTodosByStatus(list.slug),
+    counts: countItemsByStatus(list.slug),
   };
 }
 

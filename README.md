@@ -135,6 +135,22 @@ code --add ../tasker-master                         # adds it as a second root f
 
 Then **File → Save Workspace As…**, saved _outside_ both folders (`~/Developer/tasker.code-workspace`) — dropped inside either one it shows up as an untracked file.
 
+**If `../tasker-master` is already there, it's stale.** The folder survives from the last session and its detached HEAD stays pinned at whatever `master` was then, so `git worktree add` fails on the existing path and the answer key you read is the old one. Check before trusting it:
+
+```bash
+git worktree list                     # the sha next to ../tasker-master vs. the one next to master
+git -C ../tasker-master status --short   # anything listed is an edit you made in the answer key by mistake
+```
+
+Nothing listed — rebuild it at today's `master`:
+
+```bash
+git worktree remove ../tasker-master
+git worktree add --detach ../tasker-master master
+```
+
+Files listed — they were typed into the wrong folder, so decide before deleting. Copy them out first if you want them, then `git worktree remove --force ../tasker-master` and re-add.
+
 **Start the branch with the work stripped back out.** Branching off `master` hands you the files already written, so start from the commit _before_ whatever you want to redo — `6f2bb20` (`t-2-dependencies-and-base-colors`) is the last one before the components existed:
 
 ```bash
@@ -248,6 +264,6 @@ All eight levels are implemented and committed as the reference build. Verified:
 
 Exercised end-to-end against the dev server — redirect from `/`, 404s on bad list / bad todo / cross-list access, add, toggle, both filters, both Zod error branches, successful save + redirect, and nested layout counts revalidating after every mutation.
 
-**Delete is the exception.** The earlier claim that it was exercised end-to-end was wrong: the fetcher form posted a second `id` field instead of `intent`, so the action matched no branch and delete silently did nothing. `deleteById` itself was always correct and always covered by `bun test` — the break was in the form wiring, which nothing tests. Fixed, but not yet re-run against the dev server.
+**Delete is the exception.** The earlier claim that it was exercised end-to-end was wrong: the fetcher form posted a second `id` field instead of `intent`, so the action matched no branch and delete silently did nothing. `deleteItemById` itself was always correct and always covered by `bun test` — the break was in the form wiring, which nothing tests. Fixed, but not yet re-run against the dev server.
 
 Not yet verified in a browser: delete, the optimistic toggle, pending button states, and `NavLink` active styling are server-correct but visually unconfirmed.

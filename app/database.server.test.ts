@@ -1,12 +1,12 @@
 import { expect, test } from "bun:test";
 import {
   addItem,
-  countTodosByStatus,
-  deleteById,
-  findById,
+  countItemsByStatus,
+  deleteItemById,
+  findItemById,
   getItemsByCategory,
-  toggleTodo,
-  updateById,
+  toggleItemStatus,
+  updateItemById,
 } from "./database.server";
 
 test("adds a todo to the right list and leaves it open", () => {
@@ -14,29 +14,29 @@ test("adds a todo to the right list and leaves it open", () => {
 
   expect(todo.listSlug).toBe("inbox");
   expect(todo.status).toBe("open");
-  expect(findById(todo.id)?.title).toBe("Write a test");
+  expect(findItemById(todo.id)?.title).toBe("Write a test");
 
-  deleteById(todo.id);
+  deleteItemById(todo.id);
 });
 
 test("toggle flips status both ways and moves the counts", () => {
-  const before = countTodosByStatus("inbox");
+  const before = countItemsByStatus("inbox");
   const todo = addItem("inbox", "Toggle me");
 
-  toggleTodo(todo.id);
-  expect(findById(todo.id)?.status).toBe("done");
-  expect(countTodosByStatus("inbox").done).toBe(before.done + 1);
+  toggleItemStatus(todo.id);
+  expect(findItemById(todo.id)?.status).toBe("done");
+  expect(countItemsByStatus("inbox").done).toBe(before.done + 1);
 
-  toggleTodo(todo.id);
-  expect(findById(todo.id)?.status).toBe("open");
+  toggleItemStatus(todo.id);
+  expect(findItemById(todo.id)?.status).toBe("open");
 
-  deleteById(todo.id);
+  deleteItemById(todo.id);
 });
 
 test("status filter returns only matching todos", () => {
   const open = addItem("inbox", "Still open");
   const done = addItem("inbox", "Already done");
-  toggleTodo(done.id);
+  toggleItemStatus(done.id);
 
   const doneIds = getItemsByCategory({ listSlug: "inbox", status: "done" }).map(
     (t) => t.id,
@@ -44,8 +44,8 @@ test("status filter returns only matching todos", () => {
   expect(doneIds).toContain(done.id);
   expect(doneIds).not.toContain(open.id);
 
-  deleteById(open.id);
-  deleteById(done.id);
+  deleteItemById(open.id);
+  deleteItemById(done.id);
 });
 
 test("todos are scoped to their list", () => {
@@ -58,15 +58,15 @@ test("todos are scoped to their list", () => {
     getItemsByCategory({ listSlug: "someday" }).map((t) => t.id),
   ).toContain(todo.id);
 
-  deleteById(todo.id);
+  deleteItemById(todo.id);
 });
 
 test("update rewrites title and notes", () => {
   const todo = addItem("inbox", "Before");
-  updateById({ id: todo.id, title: "After", notes: "With notes" });
+  updateItemById({ id: todo.id, title: "After", notes: "With notes" });
 
-  expect(findById(todo.id)?.title).toBe("After");
-  expect(findById(todo.id)?.notes).toBe("With notes");
+  expect(findItemById(todo.id)?.title).toBe("After");
+  expect(findItemById(todo.id)?.notes).toBe("With notes");
 
-  deleteById(todo.id);
+  deleteItemById(todo.id);
 });
